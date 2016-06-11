@@ -81,7 +81,7 @@ def colorit(color, msg):
     cv = scheme.get(color)
     if not cv:
         raise KeyError('color is not defined.')
-    if not isinstance(msg, (str, unicode)):
+    if not isinstance(msg, (str)):
         return
     nc = scheme.get('nc')
     return ''.join([cv, msg, nc])
@@ -205,12 +205,12 @@ def cli():
     # Parse the command-line arguments.
     arguments = docopt(__doc__)
 
-    from_station_code = stations.get(arguments['<from>'])
+    from_station_code = stations.get(arguments['<from>'].encode('utf-8'))
     if not from_station_code:
         print('Seems that no this station where you from.')
         exit()
 
-    to_station_code = stations.get(arguments['<to>'])
+    to_station_code = stations.get(arguments['<to>'].encode('utf-8'))
     if not to_station_code:
         print('Seems that no this station where you going to.')
         exit()
@@ -224,7 +224,7 @@ def cli():
     opts = ''.join(o[1] for o in arguments
                             if o in '-d-g-k-t-z' and arguments[o])
 
-    params = build_params(from_station_code, to_station_code, valid_date)
+    params = build_params(from_station_code.decode(), to_station_code.decode(), valid_date)
     try:
         resp = requests.get(QUERY_URL, params=params, verify=False)
     except ConnectionError:
